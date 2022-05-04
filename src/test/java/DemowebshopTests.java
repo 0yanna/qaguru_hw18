@@ -17,8 +17,8 @@ public class DemowebshopTests {
                 .log().all()
                 .statusCode(200)
                 .body("success", is(false))
-                .body("message", is("[This product requires the following" +
-                        "product is added to the cart: TCP Instructor Led Training]"));
+                .body("message", is('[This product requires the following" +
+                        "product is added to the cart: TCP Instructor Led Training]'));
     }
 
     @Test
