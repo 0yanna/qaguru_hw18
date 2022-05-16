@@ -1,12 +1,14 @@
 import org.junit.jupiter.api.Test;
 
+import static io.restassured.RestAssured.expect;
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DemowebshopTests {
     @Test
     void addProductToCart() {
-        given()
+        String response= given()
                 .contentType("application/json; charset=utf-8")
                 .body("{\n" +
                         "  \"addtocart_63.EnteredQuantity\": \"1\"\n" +
@@ -17,14 +19,15 @@ public class DemowebshopTests {
                 .log().all()
                 .statusCode(200)
                 .body("success", is(false))
-                .body("message", is('[This product requires the following" +
-                        "product is added to the cart: TCP Instructor Led Training]'));
+                .extract().path("message[0]");
+        System.out.println(response);
+        assertEquals("This product requires the following product is added to the cart: TCP Instructor Led Training", response);
     }
 
     @Test
     void addToWishList() {
         given()
-                .contentType("application/json; charset=utf-8")
+                .contentType("application/x-www-form-urlencoded; charset=utf-8")
                 .body("product_attribute_28_7_10=25&product_attribute_28_1_11=29&addtocart_28.EnteredQuantity=1")
                 .when()
                 .post("http://demowebshop.tricentis.com/addproducttocart/details/28/2")
@@ -32,7 +35,7 @@ public class DemowebshopTests {
                 .log().all()
                 .statusCode(200)
                 .body("success", is(true))
-                .body("message", is("The product has been added to your <a href=\\\"/wishlist\\\">wishlist</a>"));
+                .body("message", is("The product has been added to your <a href=\"/wishlist\">wishlist</a>"));
     }
 
     @Test
@@ -47,4 +50,5 @@ public class DemowebshopTests {
                 .statusCode(200)
                 .body("error", is("Only registered users can vote."));
     }
+
 }
